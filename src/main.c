@@ -1,7 +1,9 @@
 #include "raylib.h"
 #include "player.h"
+#include "maploader.h"
 
 Vector2 playerInput = {0, 0};
+char mapArray[28][36];
 
 void DrawDebug(void);
 void PlayerMove(void);
@@ -15,11 +17,15 @@ int main(void){
 
 	InitWindow(screenSize.x, screenSize.y, "PacClone");
 	SetTargetFPS(60);
+
+	initMapData();
+	
 	
 	while(!WindowShouldClose()){
 		if(playerEnabled){updatePlayer();}
 		
 		BeginDrawing();
+			loadMap();
 			if(playerEnabled){drawPlayer();}
 
 			//Always debug render at end so it draws over everything
