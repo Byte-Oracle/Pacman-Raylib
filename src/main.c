@@ -2,7 +2,6 @@
 #include "player.h"
 
 Vector2 playerInput = {0, 0};
-float movementSpeed = 1.0;
 
 void DrawDebug(void);
 void PlayerMove(void);
@@ -18,11 +17,12 @@ int main(void){
 	SetTargetFPS(60);
 	
 	while(!WindowShouldClose()){
-		if(playerEnabled){
-			updatePlayer();
-		}
+		if(playerEnabled){updatePlayer();}
 		
 		BeginDrawing();
+			if(playerEnabled){drawPlayer();}
+
+			//Always debug render at end so it draws over everything
 			if(showDebug){DrawDebug();}	
 		EndDrawing();
 	}
