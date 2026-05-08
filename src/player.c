@@ -42,5 +42,5 @@ void updatePlayer(){
 }
 
 void drawPlayer(){
-    DrawCircleV(playerPos, 10, YELLOW);
+    DrawCircleV(playerPos, 16, YELLOW);
 }
