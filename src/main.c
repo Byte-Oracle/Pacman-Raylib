@@ -8,9 +8,10 @@ char mapArray[28][36];
 void DrawDebug(void);
 void PlayerMove(void);
 
+bool showDebug = true;
+bool playerEnabled = true;
 int main(void){
-	bool showDebug = true;
-	bool playerEnabled = true;
+
 	
 	//Double the native Pacman resolution because modern displays duh
 	const Vector2 screenSize = {448, 576};

@@ -3,5 +3,7 @@
 
 void loadMap();
 int initMapData();
+Rectangle *walls;
+int wallsCount;
 
 #endif
