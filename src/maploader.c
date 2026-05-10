@@ -9,16 +9,16 @@ int initMapData() {
     FILE *dataFile = fopen("data/test.txt", "rb");
     if (dataFile == NULL) return 1;
 
-    for (int j = 0; j < 36; j++){
-        for (int i = 0; i < 28; i++){
+    for (int vRows = 0; vRows < 36; vRows++){
+        for (int hRows = 0; hRows < 28; hRows++){
             int c = fgetc(dataFile);
 
             if (c == EOF){
-                mapArray[i][j] = '0';
+                mapArray[hRows][vRows] = '0';
             }else if(c == '\n' || c == '\r'){
-                i--;
+                hRows--;
             } else{
-                mapArray[i][j] = (char)c;
+                mapArray[hRows][vRows] = (char)c;
             }
         }
     }
@@ -29,11 +29,11 @@ int initMapData() {
 
 void loadMap(){
     int drawnBoxes = 0;
-    for (int i = 0; i < 28; i++){
-        for (int j = 0; j < 36; j++){
-            if(mapArray[i][j] == '1'){
+    for (int hRows = 0; hRows < 28; hRows++){
+        for (int vRows = 0; vRows < 36; vRows++){
+            if(mapArray[hRows][vRows] == '1'){
                 drawnBoxes += 1;
-                DrawRectangle(i * 16, j * 16, 16, 16, BLUE);
+                DrawRectangle(hRows * 16, vRows * 16, 16, 16, BLUE);
             }
         }
     }
