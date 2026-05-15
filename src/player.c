@@ -2,13 +2,12 @@
 #include "main.h"
 #include "maploader.h"
 #include <stdio.h>
-#include <math.h>
 
 void updatePlayer(void);
 void drawPlayer(void);
 
 Color playerDebugColor = {255, 0, 0, 50};
-Vector2 playerPos = {90, 90};
+Vector2 playerPos = {100, 90};
 Vector2 playerDir = {0, 0};
 Rectangle playerRect;
 bool colliding;
@@ -46,45 +45,30 @@ void updatePlayer(){
         playerDir.x = 0;
     }
 
-    bool canMoveX = true;
-    bool canMoveY = true;
+    /**
+     * Braindead easy, funny I struggled to come up with this.
+     * Game just runs the collision ahead of time and if it collides don't move the player
+     */
     Rectangle hitWall;
-    
-    /*
-    TODO: Note for me later so I don't forget what the solution is.
-
-    I basically have to check for both the X and Y axis for will the player WILL be and then if they collide
-    0 out the player movement in that direction
-
-    My brain is a bit too fried to finish this up right now
-    */
-
+    Vector2 futureLocation = {  
+                                playerPos.x + playerDir.x * GetFrameTime() * speed, 
+                                playerPos.y + playerDir.y * GetFrameTime() * speed
+                            };
+    Rectangle futurePlayerRect = {futureLocation.x-16, futureLocation.y-16, 32, 32};
+    bool canMove = true;
     for(int i = 0; i < wallsCount; i++){
-        colliding = CheckCollisionRecs(playerRect, walls[i]);
+        colliding = CheckCollisionRecs(futurePlayerRect, walls[i]);
         if(colliding){
             hitWall = walls[i];
-            /*
-            Was a bit too complicated and needless when I should be able to predict the collisions. Keeping this here for now just in case
-            Inb4 this was the right solution all along...
-
-            float playerCenterX = playerRect.x + playerRect.width / 2;
-            float playerCenterY = playerRect.y + playerRect.height / 2;
-            float wallCenterX = hitWall.x + hitWall.width / 2;
-            float wallCenterY = hitWall.y + hitWall.height / 2;
-            float colX = (wallCenterX - playerCenterX);
-            float colY = (wallCenterY - playerCenterY);
-            collisionDir = ((atan2(colY, colX) * 180/PI));
-            */
-
-            if(playerDir.x != 0) canMoveX = false;
-            if(playerDir.y != 0) canMoveY = false;
-            printf("Collision Direction: %f \n", collisionDir);
+            canMove = false;
             break;
         }
     }
-    if(canMoveX) playerPos.x += GetFrameTime() *playerDir.x * speed;
-    if(canMoveY) playerPos.y += GetFrameTime() *playerDir.y * speed;
-    playerRect = (Rectangle){playerPos.x-16, playerPos.y-16, 32, 32};
+    if(canMove){
+        playerPos.x += playerDir.x * GetFrameTime() * speed;
+        playerPos.y += playerDir.y * GetFrameTime() * speed;
+        playerRect = (Rectangle){playerPos.x-16, playerPos.y-16, 32, 32};
+    }
 }
 
 void drawPlayer(){
