@@ -7,10 +7,12 @@ void updatePlayer(void);
 void drawPlayer(void);
 
 Color playerDebugColor = {255, 0, 0, 50};
-Vector2 playerPos = {100, 90};
+Vector2 playerPos = {100, 150};
 Vector2 playerDir = {0, 0};
 Rectangle playerRect;
 bool colliding;
+int playerSize = 16;
+int halfPlayerSize = 8;
 
 
 float speed = 100.0;
@@ -59,20 +61,20 @@ void updatePlayer(){
                                 playerPos.x + delta.x, 
                                 playerPos.y + delta.y
                             };
-    Rectangle futurePlayerRect = {futureLocation.x-16, futureLocation.y-16, 32, 32};
+    Rectangle futurePlayerRect = {futureLocation.x-(halfPlayerSize), futureLocation.y-(halfPlayerSize), playerSize, playerSize};
     bool collided = false;
     for(int i = 0; i < wallsCount; i++){
         if (CheckCollisionRecs(futurePlayerRect, walls[i])) {
             //Snaps player to wall with difference between player and wall allowing for perfect fits
             collided = true;
             if (delta.x > 0) {
-                playerPos.x = walls[i].x - 16;
+                playerPos.x = walls[i].x - halfPlayerSize;
             } else if (delta.x < 0) {
-                playerPos.x = walls[i].x + walls[i].width + 16;
+                playerPos.x = walls[i].x + walls[i].width + halfPlayerSize;
             } else if (delta.y > 0) {
-                playerPos.y = walls[i].y - 16;
+                playerPos.y = walls[i].y - halfPlayerSize;
             } else if (delta.y < 0) {
-                playerPos.y = walls[i].y + walls[i].height + 16;
+                playerPos.y = walls[i].y + walls[i].height + halfPlayerSize;
             }
             break;
         }
@@ -81,11 +83,11 @@ void updatePlayer(){
         playerPos.x += delta.x;
         playerPos.y += delta.y;   
     }
-    playerRect = (Rectangle){playerPos.x-16, playerPos.y-16, 32, 32};
+    playerRect = (Rectangle){playerPos.x-halfPlayerSize, playerPos.y-halfPlayerSize, playerSize, playerSize};
 }
 
 void drawPlayer(){
-    DrawCircleV(playerPos, 16, YELLOW);
+    DrawCircleV(playerPos, halfPlayerSize, YELLOW);
     if(showDebug){
         DrawRectangleRec(playerRect, playerDebugColor);
     }
