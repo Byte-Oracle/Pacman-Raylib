@@ -16,6 +16,8 @@ bool colliding;
 float speed = 100.0;
 float collisionDir;
 
+//TODO: Works for now but in the original they do not allow the player to change direction if there is a wall in way letting the player just hold the direction
+// and smoothly roll around corners
 void updatePlayer(){
     //Hacky asf, idk what I'm doing.
     //Player can only move in one direction at a time so hacky code prevents diags.
@@ -50,25 +52,36 @@ void updatePlayer(){
      * Game just runs the collision ahead of time and if it collides don't move the player
      */
     Rectangle hitWall;
+    float deltaTime = GetFrameTime();
+
+    Vector2 delta = {playerDir.x * speed * deltaTime, playerDir.y * speed* deltaTime};
     Vector2 futureLocation = {  
-                                playerPos.x + playerDir.x * GetFrameTime() * speed, 
-                                playerPos.y + playerDir.y * GetFrameTime() * speed
+                                playerPos.x + delta.x, 
+                                playerPos.y + delta.y
                             };
     Rectangle futurePlayerRect = {futureLocation.x-16, futureLocation.y-16, 32, 32};
-    bool canMove = true;
+    bool collided = false;
     for(int i = 0; i < wallsCount; i++){
-        colliding = CheckCollisionRecs(futurePlayerRect, walls[i]);
-        if(colliding){
-            hitWall = walls[i];
-            canMove = false;
+        if (CheckCollisionRecs(futurePlayerRect, walls[i])) {
+            //Snaps player to wall with difference between player and wall allowing for perfect fits
+            collided = true;
+            if (delta.x > 0) {
+                playerPos.x = walls[i].x - 16;
+            } else if (delta.x < 0) {
+                playerPos.x = walls[i].x + walls[i].width + 16;
+            } else if (delta.y > 0) {
+                playerPos.y = walls[i].y - 16;
+            } else if (delta.y < 0) {
+                playerPos.y = walls[i].y + walls[i].height + 16;
+            }
             break;
         }
     }
-    if(canMove){
-        playerPos.x += playerDir.x * GetFrameTime() * speed;
-        playerPos.y += playerDir.y * GetFrameTime() * speed;
-        playerRect = (Rectangle){playerPos.x-16, playerPos.y-16, 32, 32};
+    if(!collided){
+        playerPos.x += delta.x;
+        playerPos.y += delta.y;   
     }
+    playerRect = (Rectangle){playerPos.x-16, playerPos.y-16, 32, 32};
 }
 
 void drawPlayer(){
